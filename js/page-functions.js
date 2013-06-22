@@ -5,13 +5,20 @@ function updateCharState(){
 
 }
 
+// Sets up variables and event listeners
 function init(){
     charSelect = document.getElementsByClassName("char-select");
     nameInput = document.getElementById("name-input");
     goBtn = document.getElementById("go");
-    console.log(charSelect);
+    if(nameInput.addEventListener){
+            nameInput.addEventListener("keyup",checkKey,false);
+        }else if(nameInput.attachEvent){
+            nameInput.attachEvent("keyup",checkKey,false);
+    }
+
     for(var i = 0; i < charSelect.length; i++){
         if(charSelect[i].addEventListener){
+            console.log(charSelect[i]);
             charSelect[i].addEventListener("click",select,false);
         }else if(charSelect[i].attachEvent){
             charSelect[i].attachEvent("click",select,false);
@@ -19,21 +26,27 @@ function init(){
     }
     setInterval(validateInput,100);
 }
+function checkKey(evt){
+    if(evt.keyCode == 13){
+        if(ready){
+            start.classList.add("hide");
+            startGame();
+        }
+    }
+}
 function select(evt){
     // Old versions of IE use srcElement....
     var caller = event.target || event.srcElement;
-    var hasClassList = (caller.classList);
-    if(hasClassList && caller.classList.contains("selected")) {return;}
+    // For some reason the select event is being called by the children
+    // Of the div instead of only the div itself.
+    if(caller.tagName != "DIV") caller = caller.parentNode;
+    if(caller.classList.contains("selected")) {return;}
     for(var i = 0; i < charSelect.length; i++){
-        if(hasClassList){
-            if(charSelect[i].classList.contains("selected")){
-                charSelect[i].classList.remove("selected")
-            }
+        if(charSelect[i].classList.contains("selected")){
+            charSelect[i].classList.remove("selected")
         }
     }
-    if(hasClassList){
-        caller.classList.add("selected");
-    }
+    caller.classList.add("selected");
     console.log(caller);
 }
 function validateInput(){
