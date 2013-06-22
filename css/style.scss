@@ -59,6 +59,11 @@ p{
     display: block;
     margin: 0 auto;
   }
+  p{
+    margin-left: 25px;
+    width: 250px;
+    font-size: 16px;
+  }
 }
 .wrap{
   text-align: center;
@@ -93,5 +98,9 @@ button{
   color: #FF0000;
 }
 .hidden{
+  visibility: hidden;
+}
+.hide{
+  display: none;
   visibility: hidden;
 }
