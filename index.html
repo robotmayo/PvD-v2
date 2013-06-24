@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <div class="block start">
+  <div class="block" id="start">
     <h1>Choose your hero</h1>
     <div id="character-selection" class="block clearfix">
       <div class="char-select block-1-3">
@@ -29,6 +29,38 @@
     <button id="go" class="hidden">GO!</button>
     </div>
   </div><!-- END BLOCK START -->
+
+  <div class="block hide" id="game">
+
+    <div class="block" id="enemies">
+      <!-- This whole section is to be generated but I just wanted to get styling and layout down beforehand.
+      <div class="enemy block-1-3">
+        <img src="" alt="">
+        <h2 class="name">The Goblin King</h2>
+        <p><em class="desc">Despite what the name goblin implies, the Goblin King is a fearsome, hulking giant.</em></p>
+        <canvas></canvas>
+      </div>-->
+    </div><!-- END ENEMIES -->
+
+    <div class="block" id="heroes">
+      <div class="hero block-1-3">
+        <img src="" alt="">
+        <div class="info">
+          <h2 class="name">Bob</h2>
+          <p class="desc"><em>The Valiant Knight</em></p>
+          <p class="health">Health<span class="health">100</span></p>
+          <p class="resource">Mana<span class="resource">100</span></p>
+          <div class="inputs"><select name="actions" id="actions" class="actions">
+              <option value="Attack">Attack</option>
+              <option value="Magic">Magic</option>
+              <option value="Defend">Defend</option>
+              <option value="Item">Item</option>
+            </select></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
   <script src="js/page-functions.js"></script>
   <script src="js/pvd-classes.js"></script>
   <script src="js/pvd.js"></script>
