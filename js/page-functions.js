@@ -1,6 +1,7 @@
 var charSelect;
 var nameInput;
 var goBtn;
+var start;
 function updateCharState(){
 
 }
@@ -10,6 +11,7 @@ function init(){
     charSelect = document.getElementsByClassName("char-select");
     nameInput = document.getElementById("name-input");
     goBtn = document.getElementById("go");
+    start = document.getElementById("start");
     if(nameInput.addEventListener){
             nameInput.addEventListener("keyup",checkKey,false);
         }else if(nameInput.attachEvent){
@@ -28,9 +30,9 @@ function init(){
 }
 function checkKey(evt){
     if(evt.keyCode == 13){
-        if(ready){
+        if(document.readyState === "complete"){
             start.classList.add("hide");
-            startGame();
+            setInterval(startGame()); // Don't want it to block
         }
     }
 }

@@ -12,6 +12,7 @@ Character.prototype.critRate = 0;
 Character.prototype.critMul = 0;
 Character.prototype.alive = true;
 Character.prototype.name = "Character";
+Character.prototype.desc = "Base Class";
 
 Character.prototype.updateHealth = function(value){
   this.health += value;
@@ -54,3 +55,9 @@ Hero.prototype.calcDamage = function(){
 };
 var test = new Hero("Dick McPhearson");
 console.log(test.calcDamage());
+
+function Enemy(name,desc){
+  this.name = name;
+  this.desc = desc;
+}
+Enemy.prototype = Character.prototype;
