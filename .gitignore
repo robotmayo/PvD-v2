@@ -1,6 +1,7 @@
 ideas-plan/
 *.sublime-project
 *.sublime-workspace
+js/lib/
 
 #################
 ## Eclipse
