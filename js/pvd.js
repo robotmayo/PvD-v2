@@ -3,6 +3,10 @@ var gameDiv;
 var enemyBlock;
 var enemyBlockList;
 // Game
+var lastTime;
+var curTime;
+var elapsed; // Current frame time (delta) last frame time
+var chars; // List of all active characters
 
 // Player
 var player; // The player object
@@ -11,37 +15,59 @@ var enemy;
 
 
 // Creates all the needed variables and then calls the game loop.
-function startGame(){
-	gameDiv = document.getElementById("game");
-	gameDiv.classList.remove("hide");
-	enemyBlock = document.getElementById("enemies");
-	var eb = createEnemyBlock(new Enemy("The Goblin King",
-		"Despite what the name goblin implies, the Goblin King is a fearsome, hulking giant."));
+function startGame(playerName){
+	gameDiv = $("#game");
+	gameDiv.removeClass("hide");
+	enemyBlock = $("#enemies");
+	setUpGame(playerName);
+	gameLoop();
+}
+function setUpGame(playerName){
+	lastTime = Date.now();
+	curTime = 0;
+	player = new Hero(playerName);
+	enemy = new Enemy(enemy_data.goblinKing);
+	var eb = createEnemyBlock(enemy);
 	enemyBlockList = [];
 	enemyBlockList.push(eb);
-	enemyBlock.appendChild(eb);
-
+	enemyBlock.append(eb);
+	enemy.setCanvas(eb.find("canvas")[0]);
+	ctx = eb.find("canvas")[0].getContext("2d");
+	chars = [];
+	chars.push(player,enemy);
+}
+function gameLoop(){
+	curTime = Date.now();
+	elapsed = (curTime - lastTime) / 1000;
+	update();
+	render();
+	setTimeout(gameLoop,33);
+	lastTime = curTime;
+}
+function update(){
+	for(var e in chars){
+		chars[e].update();
+	}
+}
+function render(){
+	for(var e in chars){
+		chars[e].render();
+	}
 }
 function updateEnemyBlock(blockName){
 }
-// There has to be a way to make this function less convoluted...
+// Its better...
 function createEnemyBlock(enemy){
-	var eBlock = document.createElement("div");
-	eBlock.className = "enemy block-1-3";
-	eBlock.appendChild(document.createElement("img"));
-	var temp = document.createElement("h2");
-	temp.className = "name";
-	temp.innerHTML = enemy.name;
-	eBlock.appendChild(temp);
-	temp = [];
-	temp[0] = document.createElement("p");
-	temp[1] = document.createElement("em");
-	temp[0].className = "desc";
-	temp[1].innerHTML = enemy.desc;
-	temp[0].appendChild(temp[1]);
-	temp = temp[0];
-	eBlock.appendChild(temp);
-	eBlock.appendChild(document.createElement("canvas"));
-	temp = null;
+	var eBlock = $("<div/>");
+	eBlock.addClass("enemy block-1-3");
+	eBlock.append($("<img/>").attr("src","#"));
+	eBlock.append($("<h2/>").text(enemy.name));
+	var p = $("</p>").addClass("desc");
+	var em = $("<em/>").text(enemy.desc);
+	p.append(em);
+	eBlock.append(p);
+	eBlock.append("<canvas/>");
+	enemyBlock.append(eBlock);
+	p = em = null;
 	return eBlock;
 }
