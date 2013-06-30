@@ -20,6 +20,9 @@ function init(){
         $(this).closest("#character-selection")
         .find(".char-select").removeClass("selected");
         $(this).addClass("selected");
+        if(nameInput.hasClass("hidden")){
+            nameInput.removeClass("hidden");
+        }
     });
     goBtn.on("click",function(){
         if(nameValid){clearAndBegin();}
@@ -35,6 +38,8 @@ function checkKey(evt){
 function clearAndBegin(){
     start.addClass("hide");
     clearInterval(inputIntervalId);
+    nameInput.off("keyup");
+    goBtn.off("click");
     startGame(nameInput.val());
 }
 function validateInput(){
