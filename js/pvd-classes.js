@@ -30,7 +30,9 @@ Character.prototype.updateMana = function(value){
 };
 
 Character.prototype.useAttack = function(target){
+  if(this.atb < this.maxAtb) return;
   target.updateHealth(this.calcDamage());
+  this.resetAtb();
 };
 
 Character.prototype.useMagic = function(target){
@@ -42,15 +44,15 @@ Character.prototype.defend = function(){
 };
 
 Character.prototype.calcDamage = function(){
-  return 1;
+  return 0;
 };
 
 Character.prototype.calcMagicDamage = function(){
-  return 1;
+  return 0;
 };
 
 Character.prototype.update = function(){
-  this.updateAtb();
+  
 };
 
 Character.prototype.updateAtb = function(){
@@ -59,6 +61,10 @@ Character.prototype.updateAtb = function(){
     this.atb = this.maxAtb;
   }
 };
+
+Character.prototype.resetAtb = function(){
+  this.atb = 0;
+}
 // Expects a canvas context
 Character.prototype.render = function(context){
   // Overide and render
@@ -68,19 +74,50 @@ Character.prototype.canvasContext = false;
 Character.prototype.setCanvas = function(canvas){
   this.canvas = canvas;
   this.canvasContext = canvas.getContext("2d");
+  this.canvasContext.font = "24px arial bold";
+  this.canvasContext.textBaseline = "bottom";
 }
 Character.prototype.getBar = function(min,max,width){
   return Math.floor((min/max)*width);
 }
 
-function Hero(name){
+function Knight(name){
   this.name = name;
+  this.desc = "The valiant knight"
+  this.health = this.maxHealth = 2400;
+  this.mana = this.maxMana = 200;
+  this.render = function(){
+    this.canvasContext.clearRect(0,0,this.canvas.width,this.canvas.height);
+
+    // Bar Drawing
+    this.canvasContext.fillStyle = "#AA0042";
+    this.canvasContext.fillRect(0,5,this.getBar(this.health,this.maxHealth,200),25);
+
+    this.canvasContext.fillStyle = "#4200AA";
+    this.canvasContext.fillRect(0,45,this.getBar(this.mana,this.maxMana,200),25);
+
+    this.canvasContext.fillStyle = "rgb(119,144,255)";
+    this.canvasContext.fillRect(0,85,this.getBar(this.atb,this.maxAtb,200),25);
+
+    // Text Drawing 
+    // Text rendering is really shitty. REALLY SHITTY.
+    //this.canvasContext.fillStyle = "#4200AA";
+    //this.canvasContext.fillText("HP",220,30);
+
+    //this.canvasContext.fillStyle = "#4200AA";
+    //this.canvasContext.fillText("MP " + this.mana,210, 45);
+
+    
+  };
+  this.update = function(){
+    this.updateAtb();
+  }
+  this.calcDamage = function(){
+    return -500;
+  }
+
 }
-Hero.prototype = new Character();
-Hero.prototype.calcDamage = function(){
-  return 999999;
-};
-var test = new Hero("Dick McPhearson");
+Knight.prototype = new Character();
 
 /**
 Name {String} Enemy name
@@ -102,13 +139,21 @@ function Enemy(obj,name,desc,hp,mp,satb,matb,atbc){
   
   this.render = function(){
     this.canvasContext.clearRect(0,0,this.canvas.width,this.canvas.height);
-    this.canvasContext.fillStyle = "rgb(119,144,255)";
-    this.canvasContext.fillRect(0,75,this.getBar(this.atb,this.maxAtb,200),25);
+
     this.canvasContext.fillStyle = "#AA0042";
-    this.canvasContext.fillRect(0,0,this.getBar(this.health,this.maxHealth,200),25);
+    this.canvasContext.fillRect(0,5,this.getBar(this.health,this.maxHealth,200),25);
+
     this.canvasContext.fillStyle = "#4200AA";
-    this.canvasContext.fillRect(0,0,this.getBar(this.mana,this.maxMana,200),25);
+    this.canvasContext.fillRect(0,45,this.getBar(this.mana,this.maxMana,200),25);
+
+    this.canvasContext.fillStyle = "rgb(119,144,255)";
+    this.canvasContext.fillRect(0,85,this.getBar(this.atb,this.maxAtb,200),25);
+
+    
   };
+  this.update = function(){
+    this.updateAtb();
+  }
 
 }
 Enemy.prototype = new Character();
