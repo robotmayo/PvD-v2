@@ -5,16 +5,19 @@ var goBtn;
 var start;
 var inputIntervalId;
 var nameValid;
+var selected;
 function updateCharState(){
 
 }
 
 // Sets up variables and event listeners
 function init(){
+    addCharDesc();
     charSelect = $(".char-select");
     nameInput = $("#name-input");
     goBtn = $("#go");
     start = $("#start");
+    nameInput.val("Violent Asperagus");
     nameInput.on("keyup",checkKey);
     charSelect.on("click",function(){
         $(this).closest("#character-selection")
@@ -23,12 +26,22 @@ function init(){
         if(nameInput.hasClass("hidden")){
             nameInput.removeClass("hidden");
         }
+        selected = $(this);
     });
     goBtn.on("click",function(){
         if(nameValid){clearAndBegin();}
     });
     nameValid = false;
     inputIntervalId = setInterval(validateInput,100);
+}
+function addCharDesc(){
+    var i = 0;
+    var charSelect = $(".char-select").each(function(){
+        $(this).children("h2").text(heroDesc[i].name);
+        $(this).children("p.info").text(heroDesc[i].desc);
+        $(this).data("class",heroDesc[i].name.toLowerCase());
+        i++;
+    });
 }
 function checkKey(evt){
     if(evt.keyCode == 13 && nameValid == true){
@@ -40,7 +53,8 @@ function clearAndBegin(){
     clearInterval(inputIntervalId);
     nameInput.off("keyup");
     goBtn.off("click");
-    startGame(nameInput.val());
+    //selected.data().class
+    startGame({name : nameInput.val(), class : "knight"});
 }
 function validateInput(){
     if(nameInput.val().length < 5){
