@@ -9,63 +9,82 @@ var elapsed; // Current frame time (delta) last frame time
 var chars; // List of all active characters
 var enemyList; // List of all enemys
 var enemyBlockList; // List of all enemy blocks
+var dead; // Number of dead enemies
 
 // Player
-var player; // The player object
+var player; // The currently active player
+var players; // All players
 var target; // The currently selected enemy
 // Enemy
 var enemy;
 
 
 // Creates all the needed variables and then calls the game loop.
-function startGame(playerName){
+function startGame(playerData){
 	gameDiv = $("#game");
 	gameDiv.removeClass("hide");
 	enemyBlock = $("#enemies");
 	heroBlock = $("#heroes");
-	setUpGame(playerName);
-	gameLoop();
-}
-function setUpGame(playerName){
 	lastTime = Date.now();
 	curTime = 0;
-	player = new Knight(playerName);
-	heroBlock.append(createHeroBlock(player));
-	enemy = new Enemy(enemy_data.goblinKing);
+	setUpEnemies();
+	setUpPlayer(playerData);
+	chars = [];
+	chars.push(player);
+	for(var i = 0; i < enemyList.length; i++){chars.push(enemyList[i])};
+	target = enemyList[0];
+	enemyBlockList[0].addClass("selected-red");
+	gameLoop();
+}
+function setUpEnemies(){
 	enemyList = [];
-	enemyList.push(enemy);
-	var eb = createEnemyBlock(enemy);
-	eb[0].id = enemyList.length-1;
-	eb.on("click",function(){
+	enemyBlockList = [];
+	enemyList.push(new Enemy(enemyData.goblinKing));
+	enemyList.push(new Enemy(enemyData.goblin));
+	enemyList.push(new Enemy(enemyData.goblin));
+	var eb;
+	for(var i = 0; i < enemyList.length; i++){
+		eb = createEnemyBlock(enemyList[i]);
+		eb[0].id = i;
+		enemyList[i].setCanvas(eb.find("canvas")[0]);
+		enemyBlockList.push(eb);
+		enemyBlock.append(eb);
+	}
+	$(".enemy").on("click",function(){
 		$(this).closest("#enemies")
         .find(".enemy").removeClass("selected-red");
         $(this).addClass("selected-red");
         target = enemyList[$(this)[0].id];
 	});
-	enemyBlockList = [];
-	enemyBlockList.push(eb);
-	enemyBlock.append(eb);
-	enemy.setCanvas(eb.find("canvas")[0]);
-	ctx = eb.find("canvas")[0].getContext("2d");
-	chars = [];
-	chars.push(player,enemy);
+}
+function setUpPlayer(playerData){
+	player = new Knight(playerData.name,heroData[playerData.class.toLowerCase()]);
+	heroBlock.append(createHeroBlock(player));
+}
+function restart(){
+	for(var i = 0; i < chars.length; i++){
+		chars[i].reset();
+	}
+}
+function getRandom(min, max) {
+    return min + Math.floor(Math.random() * (max - min + 1));
 }
 function gameLoop(){
 	curTime = Date.now();
 	elapsed = (curTime - lastTime) / 1000;
 	update();
 	render();
-	setTimeout(gameLoop,33);
 	lastTime = curTime;
+	setTimeout(gameLoop,33);
 }
 function update(){
-	for(var e in chars){
-		chars[e].update();
+	for(var i = 0; i < chars.length; i++){
+		chars[i].update();
 	}
 }
 function render(){
-	for(var e in chars){
-		chars[e].render();
+	for(var i = 0; i < chars.length; i++){
+		chars[i].render();
 	}
 }
 function updateEnemyBlock(blockName){
@@ -112,8 +131,13 @@ function createHeroBlock(hero){
 	temp2[0].id = "attack";
 	temp2.text("Attack");
 	temp.append(temp2);
+	temp2 = $("<button></button>");
+	temp2[0].id = "magic";
+	temp2.text("Magic");
+	temp.append(temp2);
 	container.append(temp);
 	temp = info = temp2 = null;
 	container.find("#attack").on("click",function(){hero.useAttack(target)});
+	container.find("#magic").on("click",function(){hero.useMagic(target)});
 	return container;
 }
